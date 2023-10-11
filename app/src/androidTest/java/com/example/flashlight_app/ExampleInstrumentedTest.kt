@@ -35,6 +35,8 @@ class ExampleInstrumentedTest {
         Espresso.onView(ViewMatchers.withId(R.id.switchId)).perform(ViewActions.swipeDown())
         Espresso.onView(ViewMatchers.withId(R.id.switchId)).check(ViewAssertions.matches(ViewMatchers.isNotChecked()))
 
+        Thread.sleep(3000)
+
         activityScenario.close()
     }
 
