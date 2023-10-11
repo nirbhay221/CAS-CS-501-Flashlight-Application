@@ -34,52 +34,61 @@ class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        gestureDetector = GestureDetector(this,this)
+        gestureDetector = GestureDetector(this, this)
         flashLightSwitch = findViewById(R.id.switchId)
         searchFlashLightOption = findViewById(R.id.searchView)
-        val camerasList = camManager.cameraIdList
-        camerasList.forEach {
-            val characteristics = camManager.getCameraCharacteristics(it)
-            val doesCameraHasFlash: Boolean? = characteristics.get(FLASH_INFO_AVAILABLE)
-            if(cameraIdWithFlash == "0" && doesCameraHasFlash == true){
-                cameraIdWithFlash = it
+
+        try {
+            val camerasList = camManager.cameraIdList
+            for (cameraId in camerasList) {
+                val characteristics = camManager.getCameraCharacteristics(cameraId)
+                val doesCameraHasFlash = characteristics.get(FLASH_INFO_AVAILABLE)
+                if (doesCameraHasFlash == true) {
+                    cameraIdWithFlash = cameraId
+                    break
+                }
             }
-        }
-        camManager.setTorchMode(cameraIdWithFlash,true)
-        flashLightSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked){
-                turnOnLight()
-            }
-            else {
-                turnOffLight()
-            }
-        }
-        searchFlashLightOption.setOnQueryTextListener(object:SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if(query != null){
-                    val lowercaseQuery = query.lowercase()
-                    if(lowercaseQuery == "on"){
+
+            if (cameraIdWithFlash != null) {
+                camManager.setTorchMode(cameraIdWithFlash!!, true)
+
+                flashLightSwitch.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
                         turnOnLight()
-                    }
-                    else if(lowercaseQuery == "off"){
+                    } else {
                         turnOffLight()
                     }
-                    else{
-                        showToast("Please type on or off for enabling or disabling Flashlight.")
+                }
 
+                searchFlashLightOption.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        if (query != null) {
+                            val lowercaseQuery = query.lowercase()
+                            if (lowercaseQuery == "on") {
+                                turnOnLight()
+                            } else if (lowercaseQuery == "off") {
+                                turnOffLight()
+                            } else {
+                                showToast("Please type 'on' or 'off' for enabling or disabling Flashlight.")
                             }
-                }
-                else{
-                    showToast("Type something.")
-                }
-                return true
-            }
+                        } else {
+                            showToast("Type something.")
+                        }
+                        return true
+                    }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        return true
+                    }
+                })
+            } else {
+                showToast("Flashlight is not available on this device.")
+                flashLightSwitch.isEnabled = false
+                searchFlashLightOption.isEnabled = false
             }
-
-        })
+        } catch (e: Exception) {
+            showToast("An error occurred: ${e.message}")
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
