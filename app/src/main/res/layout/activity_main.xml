@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="245dp"
+        android:layout_height="233dp"
+        android:layout_marginBottom="480dp"
+        android:textAlignment="center"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/flashligh_icon" />
 
     <Switch
         android:id="@+id/switchId"
@@ -17,7 +28,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.208" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -42,4 +54,8 @@
             android:iconifiedByDefault="false" />
 
     </RelativeLayout>
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
