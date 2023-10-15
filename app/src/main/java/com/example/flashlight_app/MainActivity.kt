@@ -15,7 +15,7 @@ import androidx.core.view.ContentInfoCompat.Flags
 import java.lang.Math.abs
 
 class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
-    private lateinit var flashLightSwitch: Switch;
+    lateinit var flashLightSwitch: Switch;
     private lateinit var searchFlashLightOption:SearchView
     private lateinit var gestureDetector:GestureDetector
     var x1:Float = 0.0f
@@ -119,12 +119,12 @@ class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
         }
         return super.onTouchEvent(event)
     }
-    private fun turnOnLight(){
+    fun turnOnLight(){
         camManager.setTorchMode(cameraIdWithFlash,true)
         Toast.makeText(this,"Flash is on",Toast.LENGTH_LONG).show()
         flashLightSwitch.isChecked = true;
     }
-    private fun turnOffLight(){
+    fun turnOffLight(){
         camManager.setTorchMode(cameraIdWithFlash,false)
         Toast.makeText(this,"Flash is off",Toast.LENGTH_LONG).show()
         flashLightSwitch.isChecked = false;
