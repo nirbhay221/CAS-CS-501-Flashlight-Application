@@ -14,7 +14,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.ContentInfoCompat.Flags
 import java.lang.Math.abs
 
+import androidx.activity.viewModels
+
 class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
+    private val viewModel by viewModels<flashLightViewModel>()
     lateinit var flashLightSwitch: Switch;
     private lateinit var searchFlashLightOption:SearchView
     private lateinit var gestureDetector:GestureDetector
@@ -60,18 +63,22 @@ class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
                     }
                 }
 
-                searchFlashLightOption.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                searchFlashLightOption.setOnQueryTextListener(object:SearchView.OnQueryTextListener{
                     override fun onQueryTextSubmit(query: String?): Boolean {
-                        if (query != null) {
-                            val lowercaseQuery = query.lowercase()
-                            if (lowercaseQuery == "on") {
+                        if(query != null){
+                            val lowercaseQuery = viewModel.lowerCaseQuery(query)
+                            if(lowercaseQuery == "on"){
                                 turnOnLight()
-                            } else if (lowercaseQuery == "off") {
-                                turnOffLight()
-                            } else {
-                                showToast("Please type 'on' or 'off' for enabling or disabling Flashlight.")
                             }
-                        } else {
+                            else if(lowercaseQuery == "off"){
+                                turnOffLight()
+                            }
+                            else{
+                                showToast("Please type on or off for enabling or disabling Flashlight.")
+
+                            }
+                        }
+                        else{
                             showToast("Type something.")
                         }
                         return true
@@ -104,8 +111,8 @@ class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
             {
                 x2= event.x
                 y2 = event.y
-                val valueX : Float = x2 - x1
-                val valueY : Float = y2 - y1
+                val valueX : Float = viewModel.subtractVariables(x2,x1)
+                val valueY : Float = viewModel.subtractVariables(y2,y1)
 
                 if(abs(valueY)> MIN_DISTANCE){
                     if(y2>y1){
@@ -155,7 +162,7 @@ class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
     }
 
     override fun onScroll(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
@@ -169,13 +176,13 @@ class MainActivity : AppCompatActivity() , GestureDetector.OnGestureListener{
     }
 
     override fun onFling(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        val deltaX = e2.x - e1.x
-        val deltaY = e2.y - e1.y
+        val deltaX = e2.x - e1!!.x
+        val deltaY = e2.y - e1!!.y
         val posVelocityX = Math.abs(velocityX)
         val posVelocityY = Math.abs(velocityY)
         val minFlingVelocity = 1000
